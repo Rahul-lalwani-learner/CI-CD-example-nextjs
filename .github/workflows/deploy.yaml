@@ -21,10 +21,11 @@ jobs:
           username: ubuntu
           key: ${{ secrets.PRIVATE_SSH_KEY }}
           port: 22
-          target: CI-CD-example-nextjs
           script: | 
+            pm2 stop CI-CD-example-nextjs
+            cd CI-CD-example-nextjs
             git pull origin main
             npm install 
             npm run build
             pm2 start npm --name "CI-CD-example-nextjs" -- start
-          
+
