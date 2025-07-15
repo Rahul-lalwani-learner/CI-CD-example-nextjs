@@ -29,9 +29,11 @@ jobs:
               git clone https://github.com/Rahul-lalwani-learner/CI-CD-example-nextjs.git
               cd CI-CD-example-nextjs
             fi
+            pm2 stop CI-CD-example-nextjs
+            git fetch origin main
+            git checkout main
             git pull origin main
             npm install 
             npm run build
-            pm2 stop CI-CD-example-nextjs
             pm2 start npm --name "CI-CD-example-nextjs" -- start
 
