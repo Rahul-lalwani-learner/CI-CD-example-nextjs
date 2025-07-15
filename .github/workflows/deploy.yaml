@@ -22,10 +22,16 @@ jobs:
           key: ${{ secrets.PRIVATE_SSH_KEY }}
           port: 22
           script: | 
-            pm2 stop CI-CD-example-nextjs
-            cd CI-CD-example-nextjs
+            if [ -d "CI-CD-example-nextjs" ]; then
+              cd CI-CD-example-nextjs
+            else
+              echo "Directory CI-CD-example-nextjs does not exist. cloning from github"
+              git clone https://github.com/Rahul-lalwani-learner/CI-CD-example-nextjs.git
+              cd CI-CD-example-nextjs
+            fi
             git pull origin main
             npm install 
             npm run build
+            pm2 stop CI-CD-example-nextjs
             pm2 start npm --name "CI-CD-example-nextjs" -- start
 
