@@ -22,18 +22,29 @@ jobs:
           key: ${{ secrets.PRIVATE_SSH_KEY }}
           port: 22
           script: | 
+            # Clean up all existing processes with the same name
+            pm2 stop CI-CD-example-nextjs || true
+            pm2 delete CI-CD-example-nextjs || true
+            
             if [ -d "CI-CD-example-nextjs" ]; then
               cd CI-CD-example-nextjs
+              git fetch origin main
+              git checkout main
+              git reset --hard origin/main
+              git pull origin main
             else
               echo "Directory CI-CD-example-nextjs does not exist. cloning from github"
               git clone https://github.com/Rahul-lalwani-learner/CI-CD-example-nextjs.git
               cd CI-CD-example-nextjs
             fi
-            pm2 stop CI-CD-example-nextjs
-            git fetch origin main
-            git checkout main
-            git pull origin main
-            npm install 
+            
+            # Clean install and build
+            rm -rf node_modules .next
+            npm ci
             npm run build
+            
+            # Start the application
             pm2 start npm --name "CI-CD-example-nextjs" -- start
+            pm2 save
+            pm2 status
 
